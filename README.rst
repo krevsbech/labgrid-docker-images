@@ -28,16 +28,15 @@ Run-time usage
 --------------
 To spin-up a container instance from the desired image use *docker run*:
 
-- **labgrid coordinator** The image already contains an Entry script, hence on docker run the virtual environment containing the coordinator is sources and the coordinator is started. Please note that the port of the coordinator must be exposed in order for the exporters and the client to reach the coordinator. This is done with the **-p** option.
-
   .. code-block:: bash
 
      $ docker run docker run -p 20408:20408 --name labgrid-coordinator <coordinator-image-name>
 
-- **labgrid client** The image already contains an Entry script that source the installed labgrid virtual environment and execute an interactive shell, from which the client tools are available. Hence, it is advised to spin-up an interactive container with the client tools:
-
+To spin up a container with the labgrid client use:
   .. code-block:: bash
 
-     $ docker run -it -a stdin -a stdout --name labgrid-client <client-image-name>
+     $ docker run -it -a stdin -a stdout --name labgrid-client <client-image-name> /bin/bash
 
-  **Note:** To mount in a configuration dir on the host machine used the -v option
+From within the container the labgrid client can be used.
+
+**Note:** To mount in a configuration dir on the host machine used the -v option
