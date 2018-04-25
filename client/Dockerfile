@@ -1,9 +1,14 @@
-FROM ubuntu:16.04
-RUN apt-get update
-RUN apt-get install --assume-yes git python3 virtualenv python3-pip
+FROM python:3
 
-RUN virtualenv -p python3 /opt/labgrid-venv && . /opt/labgrid-venv/bin/activate && pip3 install labgrid==0.1.0
+# Tools 
+RUN apt-get update && \
+    apt-get install microcom -y
+    
+# install labgrid latest master
+RUN git clone https://github.com/labgrid-project/labgrid /opt/labgrid && \
+    pip install -e /opt/labgrid
 
-COPY entry_script.sh /opt/entry_script.sh
-RUN chmod a+x /opt/entry_script.sh
-ENTRYPOINT ["/opt/entry_script.sh"]
+RUN echo "stty rows 33 cols 204" >> /etc/bash.bashrc
+
+WORKDIR /opt/labgrid
+CMD ["/bin/bash"]
