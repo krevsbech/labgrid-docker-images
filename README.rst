@@ -32,7 +32,8 @@ To spin-up a container instance from the desired image use *docker run*:
 
   .. code-block:: bash
 
-     $ docker run docker run -p 20408:20408 --name labgrid-coordinator <coordinator-image-name>
+     $ docker-compose exec client /bin/bash
+     $ labgrid-client -x ws://coordinator:20408/ws resources
 
 - **labgrid client** The image already contains an Entry script that source the installed labgrid virtual environment and execute an interactive shell, from which the client tools are available. Hence, it is advised to spin-up an interactive container with the client tools:
 

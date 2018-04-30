@@ -1,0 +1,40 @@
+version: '3.3'
+services:
+  coordinator:
+    build:
+      context: "../coordinator"
+    networks:
+      - labgrid_net
+    tty: true
+  client:
+    build:
+      context: "../client"
+    networks:
+      - labgrid_net
+    tty: true
+    stdin_open: true
+  exporter:
+    build:
+      context: "../exporter"
+    volumes:
+      - "./exporter-conf:/opt/exporter-conf"
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    networks:
+      - labgrid_net
+    entrypoint: /opt/exporter-conf/entrypoint.sh
+    depends_on:
+      - coordinator
+    tty: true
+    stdin_open: true
+    privileged: true
+
+networks:
+  labgrid_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: labgrid_bridge
+    ipam:
+      driver: default
+      config:
+        - subnet:  172.10.238.0/24
