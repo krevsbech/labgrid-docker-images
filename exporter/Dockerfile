@@ -6,6 +6,7 @@ RUN apt-get update && \
 
 RUN git clone https://github.com/labgrid-project/labgrid /opt/labgrid && \
     pip install -e /opt/labgrid
+RUN git clone https://github.com/vishnubob/wait-for-it.git /opt/wait-for-it
 
 RUN echo "stty rows 33 cols 204" >> /etc/bash.bashrc
 
