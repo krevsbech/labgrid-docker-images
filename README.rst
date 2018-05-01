@@ -5,7 +5,7 @@ Purpose
 -------
 This repository contains docker files to build a Docker image for the following Labgrid instances:
 
-- **labgrid coordinator** (Crossbar) This instance simply configures a Labgrid coordinator instance the image is build by:
+- **labgrid coordinator** (Crossbar) This instance simply configures a Labgrid coordinator instance, the image is build by:
 
   .. code-block:: bash
 
@@ -19,25 +19,56 @@ This repository contains docker files to build a Docker image for the following 
      $ cd client
      $ docker build -t <client-image-name> .
 
+- **labgrid exporter** This instance contains the Labgrid exporter tools. The image is build by:
+
+  .. code-block:: bash
+
+     $ cd exporter
+     $ docker build -t <exporter-image-name> .
+
 Desired architecture
 --------------------
-The docker images in this repository are thought to be used in a distributed setting, where a coordinator, client and exporter is utilized, as described in the `docs <https://labgrid.readthedocs.io/en/latest/getting_started.html#setting-up-the-distributed-infrastructure>`_
-The exporter is not provided as a Docker image, as this is thought to be installed directly in the host OS.
+The docker images in this repository are thought to be used in a distributed setting, where a coordinator, client and exporter are utilized, as described in the `docs <https://labgrid.readthedocs.io/en/latest/getting_started.html#setting-up-the-distributed-infrastructure>`_
+The exporter is provided as a Docker image, but this is primarily intended for test purpose, as in most cases it will be most beneficial to run the exporter on dedicated hardware.
 
-Run-time usage
---------------
-To spin-up a container instance from the desired image use *docker run*:
+Staging - Test environment
+--------------------------
+In *staging* a docker compose based staging environment resides. The staging environment contains a coordinator, an exporter and a client. Moreover a simple example configuration is provided to expose the USB serial on the Host. **Note** It is assumed that /dev/ttyUSB0 is available on the host to run the staging. It is also assumed that the serial is connected to the DUT.
 
-- **labgrid coordinator** The image already contains an Entry script, hence on docker run the virtual environment containing the coordinator is sources and the coordinator is started. Please note that the port of the coordinator must be exposed in order for the exporters and the client to reach the coordinator. This is done with the **-p** option.
+Each container can be started individually with the appropriate debug TTY attached:
 
-  .. code-block:: bash
-
-     $ docker run docker run -p 20408:20408 --name labgrid-coordinator <coordinator-image-name>
-
-- **labgrid client** The image already contains an Entry script that source the installed labgrid virtual environment and execute an interactive shell, from which the client tools are available. Hence, it is advised to spin-up an interactive container with the client tools:
+Coordinator
+...........
 
   .. code-block:: bash
 
-     $ docker run -it -a stdin -a stdout --name labgrid-client <client-image-name>
+     $ docker-compose up coordinator
 
-  **Note:** To mount in a configuration dir on the host machine used the -v option
+Exporter
+........
+
+  .. code-block:: bash
+
+     $ docker-compose up exporter
+     
+Client
+......     
+
+  .. code-block:: bash
+
+     $ docker-compose up -d client
+
+As the client require an interactive shell, this can be achieved as described below, where an interactive shell is opened and the client is used to list the resources seen be the coordinator:
+
+  .. code-block:: bash
+
+     $ docker-compose exec client /bin/bash
+     $ labgrid-client -x ws://coordinator:20408/ws resources
+
+If debug TTY's are not needed the staging environment is simply started by:
+
+  .. code-block:: bash
+
+     $ docker-compose up -d
+
+The client can still be accessed by exec as described above.
