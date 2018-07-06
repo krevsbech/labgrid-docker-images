@@ -18,6 +18,7 @@ services:
       context: "../exporter"
     volumes:
       - "./exporter-conf:/opt/exporter-conf"
+      - "/run/udev:/run/udev:ro"
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
     networks:
