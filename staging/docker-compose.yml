@@ -9,6 +9,7 @@ services:
   client:
     build:
       context: "../client"
+    tmpfs: "/tmp"
     networks:
       - labgrid_net
     tty: true
